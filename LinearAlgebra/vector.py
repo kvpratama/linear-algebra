@@ -1,7 +1,7 @@
 from math import sqrt, acos, degrees, pi
 from decimal import Decimal, getcontext
 
-getcontext().prec = 30
+getcontext().prec = 10
 
 class Vector(object):
 
@@ -98,9 +98,9 @@ class Vector(object):
 
             if in_degrees:
                 degrees_per_radian = 180. / pi
-                return angle_in_radians * degrees_per_radian
+                return round(angle_in_radians * degrees_per_radian, 3)
             else:
-                return angle_in_radians
+                return round(angle_in_radians, 3)
 
         except Exception as e:
             if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
@@ -108,14 +108,55 @@ class Vector(object):
             else:
                 raise e
 
+    def is_zero(self, tolerance=1e-10):
+        return self.magnitude() < tolerance
 
-v = Vector([7.35, 0.221, 5.188])
-w = Vector([2.751, 8.259, 3.985])
-print(v.plus(w))
-print(v.minus(w))
-print(v.times_scalar(3))
-print(v.inner_product(w))
-print(v.angle(w))
-print(v.angle_in_degree(w))
-print(v.angle_with(w))
-print(v.angle_with(w, True))
+    def is_parallel(self, v):
+        return (self.is_zero() or v.is_zero()
+                    or self.angle_with(v) == 0
+                    or self.angle_with(v) == 3.142)
+        # parallel = True
+        # n = len(self.coordinates)
+        # for i in range(n):
+        #
+        #     if self.coordinates[i] > v.coordinates[i]:
+        #         new_coordinate = self.coordinates[i] % v.coordinates[i]
+        #     else:
+        #         new_coordinate = v.coordinates[i] % self.coordinates[i]
+        #
+        #     print(new_coordinate)
+        #     if new_coordinate != 0:
+        #         parallel = False
+        #         # break
+        # return parallel
+
+    def is_orthogonal(self, v, tolerance=13-10):
+        return abs(self.inner_product(v)) < tolerance
+        # orthogonal = True
+        # new_coordinate = [x * y for x, y in zip(self.coordinates, v.coordinates)]
+        # n = len(new_coordinate)
+        # for i in range(n):
+        #     if new_coordinate[i] != 0.0:
+        #         orthogonal = False
+        #         break
+        # return orthogonal
+
+
+# v = Vector([-7.579, -7.88])
+# w = Vector([22.737, 23.64])
+# v = Vector([-2.029, 9.97, 4.172])
+# w = Vector([-9.231, -6.639, -7.245])
+# v = Vector([-2.328, -7.284, -1.214])
+# w = Vector([-1.821, 1.072, -2.94])
+v = Vector([2.118, 4.827])
+w = Vector([0, 0])
+# print(v.plus(w))
+# print(v.minus(w))
+# print(v.times_scalar(3))
+# print(v.inner_product(w))
+# print(v.angle(w))
+# print(v.angle_in_degree(w))
+# print(v.angle_with(w))
+# print(v.angle_with(w, True))
+print(v.is_parallel(w))
+print(v.is_orthogonal(w))
