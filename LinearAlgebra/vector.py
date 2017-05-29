@@ -1,7 +1,7 @@
 from math import sqrt, acos, degrees, pi
 from decimal import Decimal, getcontext
 
-getcontext().prec = 10
+getcontext().prec = 30
 
 class Vector(object):
 
@@ -94,13 +94,13 @@ class Vector(object):
         try:
             u1 = self.normalized()
             u2 = v.normalized()
-            angle_in_radians = acos(u1.inner_product(u2))
+            angle_in_radians = acos(round(u1.inner_product(u2), 3))
 
             if in_degrees:
                 degrees_per_radian = 180. / pi
-                return round(angle_in_radians * degrees_per_radian, 3)
+                return angle_in_radians * degrees_per_radian
             else:
-                return round(angle_in_radians, 3)
+                return angle_in_radians
 
         except Exception as e:
             if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
@@ -114,7 +114,7 @@ class Vector(object):
     def is_parallel(self, v):
         return (self.is_zero() or v.is_zero()
                     or self.angle_with(v) == 0
-                    or self.angle_with(v) == 3.142)
+                    or self.angle_with(v) == pi)
         # parallel = True
         # n = len(self.coordinates)
         # for i in range(n):
