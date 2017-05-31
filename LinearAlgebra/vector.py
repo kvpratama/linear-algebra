@@ -141,6 +141,26 @@ class Vector(object):
         #         break
         # return orthogonal
 
+    def component_orthogonal_to(self, basis):
+        try:
+            projection = self.component_parallel_to(basis);
+            return self.minus(projection)
+        except Exception as e:
+            if str(e) == self.NO_UNIQUE_PARALLEL_COMPONENT_MSG:
+                raise Exception(self.NO_UNIQUE_ORTHOGONAL_COMPONENT_MSG)
+            else:
+                raise e
+
+    def component_parallel_to(self, basis):
+        try:
+            u = basis.normalized()
+            weight = self.inner_product(u)
+            return u.times_scalar(weight)
+        except Exception as e:
+            if str(e) == self.CANNOT_NORMALIZE_ZERO_VECTOR_MSG:
+                raise Exception(self.NO_UNIQUE_PARALLEL_COMPONENT_MSG)
+            else:
+                raise e
 
 # v = Vector([-7.579, -7.88])
 # w = Vector([22.737, 23.64])
@@ -148,8 +168,14 @@ class Vector(object):
 # w = Vector([-9.231, -6.639, -7.245])
 # v = Vector([-2.328, -7.284, -1.214])
 # w = Vector([-1.821, 1.072, -2.94])
-v = Vector([2.118, 4.827])
-w = Vector([0, 0])
+# v = Vector([2.118, 4.827])
+# w = Vector([0, 0])
+v = Vector([3.039, 1.879])
+b = Vector([0.825, 2.036])
+v = Vector([-9.88, -3.264, -8.159])
+b = Vector([-2.155, -9.353, -9.473])
+v = Vector([3.009, -6.172, 3.692, -2.51])
+b = Vector([6.404, -9.144, 2.759, 8.718])
 # print(v.plus(w))
 # print(v.minus(w))
 # print(v.times_scalar(3))
@@ -158,5 +184,7 @@ w = Vector([0, 0])
 # print(v.angle_in_degree(w))
 # print(v.angle_with(w))
 # print(v.angle_with(w, True))
-print(v.is_parallel(w))
-print(v.is_orthogonal(w))
+# print(v.is_parallel(w))
+# print(v.is_orthogonal(w))
+print(v.component_parallel_to(b))
+print(v.component_orthogonal_to(b))
