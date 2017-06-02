@@ -6,6 +6,7 @@ getcontext().prec = 30
 class Vector(object):
 
     CANNOT_NORMALIZE_ZERO_VECTOR_MSG = 'Cannot normalize the zero vector'
+    ONLY_DEFINED_IN_TWO_THREE_DIMS_MSG = 'Only defined in two three dims msg'
 
     def __init__(self, coordinates):
         try:
@@ -162,6 +163,34 @@ class Vector(object):
             else:
                 raise e
 
+    def cross_product(self, w):
+        try:
+            new_coordinate = []
+            new_coordinate.append(self.coordinates[1] * w.coordinates[2] - w.coordinates[1] * self.coordinates[2])
+            new_coordinate.append(-(self.coordinates[0] * w.coordinates[2] - w.coordinates[0] * self.coordinates[2]))
+            new_coordinate.append(self.coordinates[0] * w.coordinates[1] - w.coordinates[0] * self.coordinates[1])
+            return Vector(new_coordinate)
+        except ValueError as e:
+            msg = str(e)
+            if msg == 'need more than 2 values to unpack':
+                self_embedded_in_R3 = Vector(self.coordinates + ('0',))
+                v_embedded_in_R3 = Vector(v.coordinates + ('0',))
+                return self_embedded_in_R3.cross(v_embedded_in_R3)
+            elif (msg == 'too many values to unpack' or msg == 'need  more than 1 value to unpack'):
+                raise Exception(self.ONLY_DEFINED_IN_TWO_THREE_DIMS_MSG)
+            else:
+                raise e
+
+    def area_of_parallelogram(self, w):
+        cross_product = self.cross_product(w)
+        return cross_product.magnitude()
+        #return sqrt(cross_product.coordinates[0]**2 + cross_product.coordinates[1]**2 + cross_product.coordinates[2]**2)
+
+    def area_of_triangle(self, w):
+        # cross_product = self.cross_product(w)
+        # return Decimal(0.5) * cross_product.magnitude()
+        return self.area_of_parallelogram(w) / Decimal('2.0')
+
 # v = Vector([-7.579, -7.88])
 # w = Vector([22.737, 23.64])
 # v = Vector([-2.029, 9.97, 4.172])
@@ -170,12 +199,21 @@ class Vector(object):
 # w = Vector([-1.821, 1.072, -2.94])
 # v = Vector([2.118, 4.827])
 # w = Vector([0, 0])
-v = Vector([3.039, 1.879])
-b = Vector([0.825, 2.036])
-v = Vector([-9.88, -3.264, -8.159])
-b = Vector([-2.155, -9.353, -9.473])
-v = Vector([3.009, -6.172, 3.692, -2.51])
-b = Vector([6.404, -9.144, 2.759, 8.718])
+# v = Vector([3.039, 1.879])
+# b = Vector([0.825, 2.036])
+# v = Vector([-9.88, -3.264, -8.159])
+# b = Vector([-2.155, -9.353, -9.473])
+# v = Vector([3.009, -6.172, 3.692, -2.51])
+# b = Vector([6.404, -9.144, 2.759, 8.718])
+v = Vector([8.462, 7.893, -8.187])
+w = Vector([6.984, -5.975, 4.778])
+v = Vector([-8.987, -9.838, 5.031])
+w = Vector([-4.268, -1.861, -8.866])
+v = Vector([1.5, 9.547, 3.691])
+w = Vector([-6.007, 0.124, 5.772])
+# print(v.cross_product(w))
+print(v.area_of_parallelogram(w))
+print(v.area_of_triangle(w))
 # print(v.plus(w))
 # print(v.minus(w))
 # print(v.times_scalar(3))
@@ -186,5 +224,5 @@ b = Vector([6.404, -9.144, 2.759, 8.718])
 # print(v.angle_with(w, True))
 # print(v.is_parallel(w))
 # print(v.is_orthogonal(w))
-print(v.component_parallel_to(b))
-print(v.component_orthogonal_to(b))
+# print(v.component_parallel_to(b))
+# print(v.component_orthogonal_to(b))
